@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useRef, useState } from "react";
 import {
   AnimatePresence,
@@ -10,9 +11,13 @@ import {
   useTransform,
 } from "framer-motion";
 import { clsx } from "clsx";
-import FrappuccinoCanvas from "@/components/FrappuccinoCanvas";
 import LoadingScreen from "@/components/LoadingScreen";
 import OverlayText from "@/components/OverlayText";
+
+const FrappuccinoCanvas = dynamic(() => import("@/components/FrappuccinoCanvas"), {
+  ssr: false,
+  loading: () => <div className="fixed inset-0 z-0 bg-[#130c08]" aria-hidden="true" />,
+});
 
 const overviewStats = [
   { label: "Shots of espresso", value: "2X", note: "Small-batch pulled every hour." },
@@ -43,6 +48,29 @@ const informationItems = [
   },
 ];
 
+const signatureMenu = [
+  {
+    name: "Classic Espresso Cream",
+    size: "Grande",
+    price: "$5.40",
+    details: "Balanced roast profile with velvet foam.",
+  },
+  {
+    name: "Caramel Cloud Edition",
+    size: "Grande",
+    price: "$5.90",
+    details: "Toasted sugar finish with caramel ribbon.",
+  },
+  {
+    name: "Mocha Velvet",
+    size: "Venti",
+    price: "$6.20",
+    details: "Dark cocoa body and espresso bloom.",
+  },
+];
+
+const partnerLocations = ["Downtown Brew Hall", "North Avenue Pickup", "Campus Coffee Lab", "Central Mall Spot"];
+
 const testimonials = [
   {
     quote:
@@ -64,11 +92,28 @@ const testimonials = [
   },
 ];
 
+const faqItems = [
+  {
+    question: "Do I need an account to order?",
+    answer: "No. Checkout works as guest by default, and pickup details are confirmed instantly.",
+  },
+  {
+    question: "Can I request less sugar or extra ice?",
+    answer: "Yes. Use the notes field and the barista workflow will apply your preferences.",
+  },
+  {
+    question: "How long does pickup usually take?",
+    answer: "Most orders are ready in 10 to 15 minutes, depending on queue volume.",
+  },
+];
+
 const navItems = [
   { href: "#overview", label: "Overview" },
+  { href: "#menu", label: "Menu" },
   { href: "#information", label: "Information" },
   { href: "#testimonials", label: "Testimonials" },
-  { href: "#order", label: "Get Your Frappuccino" },
+  { href: "#faq", label: "FAQ" },
+  { href: "#order", label: "Order" },
 ];
 
 export default function Home() {
@@ -108,7 +153,7 @@ export default function Home() {
       };
 
   return (
-    <main className="relative min-h-screen overflow-x-hidden text-white">
+    <main className="relative min-h-screen overflow-x-hidden bg-[#120c08] pb-24 text-white md:pb-0">
       <LoadingScreen onLoaded={() => setIsLoaded(true)} />
 
       <header className="fixed top-4 left-4 right-4 z-40">
@@ -202,14 +247,28 @@ export default function Home() {
               <div className="pointer-events-none fixed inset-0 z-20 flex flex-col items-center justify-center px-4">
                 <motion.div
                   style={{ opacity: ctaOpacity, y: ctaY }}
-                  className="flex flex-col items-center gap-6"
+                  className="pointer-events-auto flex flex-col items-center gap-6"
                 >
                   <h2 className="text-center font-serif text-5xl leading-[0.95] text-[#fbbf24] md:text-7xl lg:text-8xl">
                     YOURS TO HOLD.
                   </h2>
-                  <p className="text-xs tracking-[0.22em] text-[#f8e5c2]/85 uppercase md:text-sm">
+                  <p className="text-center text-xs tracking-[0.22em] text-[#f8e5c2]/85 uppercase md:text-sm">
                     Premium cold craft, revealed as you scroll
                   </p>
+                  <div className="flex flex-col gap-3 sm:flex-row">
+                    <a
+                      href="#order"
+                      className="cursor-pointer rounded-full bg-[#fbbf24] px-6 py-3 text-center text-sm font-semibold tracking-[0.14em] text-[#2c1b11] transition-colors duration-200 hover:bg-[#ffd97a]"
+                    >
+                      ORDER NOW
+                    </a>
+                    <a
+                      href="#menu"
+                      className="cursor-pointer rounded-full border border-[#f6ce87]/60 bg-[#120c08]/40 px-6 py-3 text-center text-sm font-semibold tracking-[0.14em] text-[#f8e5c2] transition-colors duration-200 hover:bg-[#120c08]/65"
+                    >
+                      VIEW MENU
+                    </a>
+                  </div>
                 </motion.div>
               </div>
             </motion.div>
@@ -219,7 +278,7 @@ export default function Home() {
         {isLoaded && (
           <motion.div
             style={{ opacity: scrollHintOpacity }}
-            className="pointer-events-none fixed right-5 bottom-6 z-30 rounded-full border border-white/20 bg-[#120c08]/55 px-4 py-2 text-[11px] tracking-[0.2em] text-white/70 uppercase"
+            className="pointer-events-none fixed right-5 bottom-20 z-30 rounded-full border border-white/20 bg-[#120c08]/55 px-4 py-2 text-[11px] tracking-[0.2em] text-white/70 uppercase md:bottom-6"
           >
             Scroll to reveal
           </motion.div>
@@ -227,6 +286,20 @@ export default function Home() {
       </section>
 
       <div className="relative z-20 bg-[var(--color-cream)] pb-16 text-[var(--color-ink)]">
+        <section className="border-y border-[#eccda3] bg-gradient-to-r from-[#fef3dc] via-[#fdebcf] to-[#fbe5c1]">
+          <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-4 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8">
+            <p className="text-xs font-semibold tracking-[0.2em] text-[#7a4518] uppercase md:text-sm">
+              New online offer: Use code FIRSTSIP for 10% off your first digital order.
+            </p>
+            <a
+              href="#order"
+              className="w-fit cursor-pointer rounded-full border border-[#c68039] px-4 py-2 text-xs font-semibold tracking-[0.14em] text-[#7a4518] transition-colors duration-200 hover:bg-[#f5cf93]"
+            >
+              APPLY OFFER
+            </a>
+          </div>
+        </section>
+
         <motion.section
           id="overview"
           {...revealProps}
@@ -268,6 +341,38 @@ export default function Home() {
         </motion.section>
 
         <motion.section
+          id="menu"
+          {...revealProps}
+          className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8"
+        >
+          <div className="mb-10 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+            <div>
+              <p className="text-sm tracking-[0.22em] text-[#92400e] uppercase">Signature Menu</p>
+              <h2 className="mt-3 font-serif text-4xl text-[#2c1b11] md:text-5xl">Built for Flavor and Speed</h2>
+            </div>
+            <p className="max-w-xl text-sm leading-relaxed text-[#6f523a] md:text-base">
+              Transparent pricing, clear size options, and fast pickup timing to reduce checkout friction.
+            </p>
+          </div>
+
+          <div className="grid gap-4 lg:grid-cols-3">
+            {signatureMenu.map((item) => (
+              <article
+                key={item.name}
+                className="rounded-3xl border border-[#e4bb87] bg-[#fffbf4] p-7 shadow-[0_20px_40px_rgba(82,49,21,0.14)]"
+              >
+                <div className="flex items-center justify-between gap-4">
+                  <h3 className="font-serif text-3xl text-[#3b2414]">{item.name}</h3>
+                  <p className="text-sm tracking-[0.12em] text-[#7a4f2f] uppercase">{item.size}</p>
+                </div>
+                <p className="mt-3 text-sm leading-relaxed text-[#634932]">{item.details}</p>
+                <p className="mt-6 text-3xl font-semibold text-[#7c2d12]">{item.price}</p>
+              </article>
+            ))}
+          </div>
+        </motion.section>
+
+        <motion.section
           id="information"
           {...revealProps}
           className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8"
@@ -302,6 +407,24 @@ export default function Home() {
           </div>
         </motion.section>
 
+        <motion.section {...revealProps} className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+          <p className="text-sm tracking-[0.22em] text-[#92400e] uppercase">Available At</p>
+          <h2 className="mt-3 max-w-3xl font-serif text-4xl text-[#2c1b11] md:text-5xl">
+            Trusted by pickup locations across the city.
+          </h2>
+
+          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {partnerLocations.map((location) => (
+              <div
+                key={location}
+                className="rounded-2xl border border-[#e8c69d] bg-white/85 px-5 py-6 text-center text-sm font-semibold tracking-[0.08em] text-[#6f4e32] uppercase"
+              >
+                {location}
+              </div>
+            ))}
+          </div>
+        </motion.section>
+
         <motion.section
           id="testimonials"
           {...revealProps}
@@ -328,6 +451,31 @@ export default function Home() {
                   </p>
                 </figcaption>
               </figure>
+            ))}
+          </div>
+        </motion.section>
+
+        <motion.section
+          id="faq"
+          {...revealProps}
+          className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8"
+        >
+          <p className="text-sm tracking-[0.22em] text-[#92400e] uppercase">FAQ</p>
+          <h2 className="mt-3 max-w-3xl font-serif text-4xl text-[#2c1b11] md:text-5xl">
+            Quick answers before you place your order.
+          </h2>
+
+          <div className="mt-10 grid gap-4">
+            {faqItems.map((item) => (
+              <details
+                key={item.question}
+                className="group rounded-2xl border border-[#e7c08f] bg-[#fffaf0] p-5"
+              >
+                <summary className="cursor-pointer list-none text-lg font-semibold text-[#3b2414]">
+                  {item.question}
+                </summary>
+                <p className="mt-3 text-sm leading-relaxed text-[#5f4632] md:text-base">{item.answer}</p>
+              </details>
             ))}
           </div>
         </motion.section>
@@ -366,6 +514,16 @@ export default function Home() {
                     type="text"
                     name="name"
                     placeholder="Alex Carter"
+                    className="mt-2 w-full rounded-xl border border-[#f3d6ae]/30 bg-[#fff8ed]/10 px-4 py-3 text-sm text-white placeholder:text-[#f6ddbe]/65 outline-none transition-colors duration-200 focus:border-[#fbbf24]"
+                  />
+                </label>
+
+                <label className="text-sm text-[#f6ddbe]">
+                  Email for receipt and offers
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="alex@email.com"
                     className="mt-2 w-full rounded-xl border border-[#f3d6ae]/30 bg-[#fff8ed]/10 px-4 py-3 text-sm text-white placeholder:text-[#f6ddbe]/65 outline-none transition-colors duration-200 focus:border-[#fbbf24]"
                   />
                 </label>
@@ -413,6 +571,16 @@ export default function Home() {
                 </label>
 
                 <label className="text-sm text-[#f6ddbe]">
+                  Promo code
+                  <input
+                    type="text"
+                    name="promo"
+                    placeholder="FIRSTSIP"
+                    className="mt-2 w-full rounded-xl border border-[#f3d6ae]/30 bg-[#fff8ed]/10 px-4 py-3 text-sm text-white placeholder:text-[#f6ddbe]/65 outline-none transition-colors duration-200 focus:border-[#fbbf24]"
+                  />
+                </label>
+
+                <label className="text-sm text-[#f6ddbe]">
                   Notes
                   <textarea
                     name="notes"
@@ -432,6 +600,21 @@ export default function Home() {
             </div>
           </div>
         </motion.section>
+      </div>
+
+      <div className="fixed right-4 bottom-4 left-4 z-40 flex items-center gap-3 rounded-2xl border border-[#f6c35d]/30 bg-[#1a120c]/92 p-3 shadow-[0_10px_28px_rgba(0,0,0,0.35)] backdrop-blur-sm md:hidden">
+        <a
+          href="#menu"
+          className="flex-1 cursor-pointer rounded-xl border border-[#f6c35d]/35 px-4 py-3 text-center text-xs font-semibold tracking-[0.12em] text-[#f8e5c2]"
+        >
+          VIEW MENU
+        </a>
+        <a
+          href="#order"
+          className="flex-1 cursor-pointer rounded-xl bg-[#fbbf24] px-4 py-3 text-center text-xs font-semibold tracking-[0.12em] text-[#2a160b]"
+        >
+          ORDER NOW
+        </a>
       </div>
 
       <footer className="border-t border-white/10 bg-[#120c08] px-4 py-7 text-center text-xs tracking-[0.16em] text-white/65 uppercase sm:px-6 lg:px-8">
